@@ -2,77 +2,76 @@ const express = require('express');
 const ObjectId = require('mongodb').ObjectId;
 const router = express.Router();
 
-router.get('/departments', (req, res) => {
-  req.db.collection('departments')
-    .find()
-    .toArray()
-    .then((data) => {
-      res.json(data);
-    })
-    .catch((err) => {
-      res.status(500).json({ message: err });
-    });
-});
+router.get('/employees', (req, res) => {
+	req.db
+		.collection('employees')
+		.find()
+		.toArray()
+		.then(data => {
+			res.json(data)
+		})
+		.catch(err => {
+			res.status(500).json({ message: err })
+		})
+})
 
-router.get('/departments/random', (req, res) => {
-  req.db.collection('departments')
-    .aggregate([{ $sample: { size: 1 } }])
-    .toArray()
-    .then((data) => {
-      res.json(data[0]);
-    })
-    .catch((err) => {
-      res.status(500).json({ message: err });
-    });
-});
+router.get('/employees/random', (req, res) => {
+	req.db
+		.collection('employees')
+		.aggregate([{ $sample: { size: 1 } }])
+		.toArray()
+		.then(data => {
+			res.json(data[0])
+		})
+		.catch(err => {
+			res.status(500).json({ message: err })
+		})
+})
 
-router.get('/departments/:id', (req, res) => {
-  req.db.collection('departments')
-    .findOne({ _id: ObjectId(req.params.id) })
-    .then((data) => {
-      if(!data) res.status(404).json({ message: 'Not found' });
-      else res.json(data);
-    })
-    .catch((err) => {
-      res.status(500).json({ message: err });
-    });
-});
+router.get('/employees/:id', (req, res) => {
+	req.db
+		.collection('employees')
+		.findOne({ _id: ObjectId(req.params.id) })
+		.then(data => {
+			if (!data) res.status(404).json({ message: 'Not found' })
+			else res.json(data)
+		})
+})
 
-router.post('/departments', (req, res) => {
-  const { name } = req.body;
+router.post('/employees', (req, res) => {
+	const { firstName, lastName } = req.body
+	req.db
+		.collection('employees')
+		.insertOne({ firstName, lastName })
+		.then(() => {
+			res.json({ message: 'OK' })
+		})
+		.catch(err => {
+			res.status(500).json({ message: err })
+		})
+})
 
-  req.db.collection('departments')
-    .insertOne({ name: name })
-    .then(() => {
-      res.json({ message: 'OK' });
-    })
-    .catch((err) => {
-      res.status(500).json({ message: err });
-    })
-});
+router.put('/employees/:id', (req, res) => {
+	const { firstName, lastName } = req.body
+	req.db
+		.collection('employees')
+		.updateOne({ _id: ObjectId(req.params.id) }, { $set: { firstName: firstName, lastName: lastName } })
+		.then(() => {
+			res.json({ message: 'OK' })
+		})
+		.catch(err => {
+			res.status(500).json({ message: err })
+		})
+})
 
-router.put('/departments/:id', (req, res) => {
-  const { name } = req.body;
-
-  req.db.collection('departments')
-    .updateOne({ _id: ObjectId(req.params.id) }, { $set: { name: name }})
-    .then(() => {
-      res.json({ message: 'OK' });
-    })
-    .catch((err) => {
-      res.status(500).json({ message: err });
-    })
-});
-
-router.delete('/departments/:id', (req, res) => {
-  req.db.collection('departments')
-    .deleteOne({ _id: ObjectId(req.params.id) })
-    .then(() => {
-      res.json({ message: 'OK' });
-    })
-    .catch((err) => {
-      res.status(500).json({ message: err });
-    })
-});
+router.delete('/employees/:id', (req, res) => {
+	req.db
+		.collection('employees')
+		.deleteOne({ _id: ObjectId(req.params.id) })
+		.then(() => {
+			res.json({ message: 'OK' })
+		})
+		.catch(err => res.status(500).json({ message: err }))
+})
 
 module.exports = router;

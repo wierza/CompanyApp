@@ -1,10 +1,10 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const ObjectId = require("mongodb").ObjectId;
+const ObjectId = require('mongodb').ObjectId;
 
-router.get("/employees", (req, res) => {
+router.get('/employees', (req, res) => {
   req.db
-    .collection("employees")
+    .collection('employees')
     .find()
     .toArray((err, data) => {
       if (err) res.status(500).json({ message: err });
@@ -12,9 +12,9 @@ router.get("/employees", (req, res) => {
     });
 });
 
-router.get("/employees/random", (req, res) => {
+router.get('/employees/random', (req, res) => {
   req.db
-    .collection("employees")
+    .collection('employees')
     .aggregate([{ $sample: { size: 1 } }])
     .toArray((err, data) => {
       if (err) res.status(500).json({ message: err });
@@ -22,9 +22,9 @@ router.get("/employees/random", (req, res) => {
     });
 });
 
-router.get("/employees/:id", (req, res) => {
+router.get('/employees/:id', (req, res) => {
   req.db
-    .collection("employees")
+    .collection('employees')
     .findOne({ _id: ObjectId(req.params.id) }, (err, data) => {
       if (err) res.status(500).json({ message: err });
       else if (!data) res.status(404).json({ message: "Not found" });
