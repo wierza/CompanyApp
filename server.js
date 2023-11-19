@@ -21,7 +21,7 @@ app.use((req, res) => {
 })
 
 // connects our backend code with the database
-mongoose.connect('mongodb://0.0.0.0:27017/companyDB', { useNewUrlParser: true });
+mongoose.connect('mongodb://127.0.0.1:27017/companyDB', { useNewUrlParser: true });
 const db = mongoose.connection;
 
 db.once('open', () => {
